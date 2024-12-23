@@ -31,10 +31,22 @@ export const ClientList = () => {
 
   const handleCreateClient = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
+      // Get the current user's ID
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("You must be logged in to create a client");
+        return;
+      }
+
       const { error } = await supabase
         .from("clients")
-        .insert([{ name: newClientName }]);
+        .insert([{ 
+          name: newClientName,
+          created_by: user.id
+        }]);
 
       if (error) throw error;
 
@@ -43,6 +55,7 @@ export const ClientList = () => {
       setIsDialogOpen(false);
       refetch();
     } catch (error) {
+      console.error('Error creating client:', error);
       toast.error("Error creating client");
     }
   };
