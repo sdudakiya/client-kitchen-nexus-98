@@ -5,9 +5,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus, Minus } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const RecipeForm = () => {
   const [ingredients, setIngredients] = useState([{ name: "", amount: "", unit: "" }]);
+  const [selectedClient, setSelectedClient] = useState<string>("");
+
+  const clients = [
+    { id: "1", name: "Sarah Johnson" },
+    { id: "2", name: "Michael Chen" },
+    { id: "3", name: "Emma Davis" },
+  ];
 
   const addIngredient = () => {
     setIngredients([...ingredients, { name: "", amount: "", unit: "" }]);
@@ -20,6 +28,22 @@ export const RecipeForm = () => {
   return (
     <Card className="p-6 space-y-8">
       <div className="space-y-4">
+        <div>
+          <Label htmlFor="client">Client</Label>
+          <Select value={selectedClient} onValueChange={setSelectedClient}>
+            <SelectTrigger className="mt-1">
+              <SelectValue placeholder="Select a client" />
+            </SelectTrigger>
+            <SelectContent>
+              {clients.map((client) => (
+                <SelectItem key={client.id} value={client.id}>
+                  {client.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div>
           <Label htmlFor="name">Recipe Name</Label>
           <Input id="name" placeholder="Enter recipe name" className="mt-1" />
