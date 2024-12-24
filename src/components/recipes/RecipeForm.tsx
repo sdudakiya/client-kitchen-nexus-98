@@ -8,8 +8,14 @@ import { Plus, Minus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export const RecipeForm = () => {
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [instructions, setInstructions] = useState("");
   const [ingredients, setIngredients] = useState([{ name: "", amount: "", unit: "" }]);
   const [selectedClient, setSelectedClient] = useState<string>("");
 
@@ -34,6 +40,46 @@ export const RecipeForm = () => {
     setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
+  const handleSubmit = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("You must be logged in to create a recipe");
+        return;
+      }
+
+      if (!selectedClient) {
+        toast.error("Please select a client");
+        return;
+      }
+
+      if (!name) {
+        toast.error("Please enter a recipe name");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("recipes")
+        .insert([{
+          name,
+          description,
+          instructions,
+          ingredients,
+          client_id: selectedClient,
+          created_by: user.id
+        }]);
+
+      if (error) throw error;
+
+      toast.success("Recipe created successfully");
+      navigate(`/clients/${selectedClient}`);
+    } catch (error) {
+      console.error('Error creating recipe:', error);
+      toast.error("Error creating recipe");
+    }
+  };
+
   return (
     <Card className="p-6 space-y-8">
       <div className="space-y-4">
@@ -55,13 +101,21 @@ export const RecipeForm = () => {
 
         <div>
           <Label htmlFor="name">Recipe Name</Label>
-          <Input id="name" placeholder="Enter recipe name" className="mt-1" />
+          <Input 
+            id="name" 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter recipe name" 
+            className="mt-1" 
+          />
         </div>
 
         <div>
           <Label htmlFor="description">Description</Label>
           <Textarea
             id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter recipe description"
             className="mt-1"
           />
@@ -72,9 +126,35 @@ export const RecipeForm = () => {
           <div className="space-y-4 mt-2">
             {ingredients.map((ingredient, index) => (
               <div key={index} className="flex gap-4 items-start fade-in">
-                <Input placeholder="Ingredient name" />
-                <Input placeholder="Amount" className="w-24" />
-                <Input placeholder="Unit" className="w-24" />
+                <Input 
+                  placeholder="Ingredient name" 
+                  value={ingredient.name}
+                  onChange={(e) => {
+                    const newIngredients = [...ingredients];
+                    newIngredients[index].name = e.target.value;
+                    setIngredients(newIngredients);
+                  }}
+                />
+                <Input 
+                  placeholder="Amount" 
+                  className="w-24"
+                  value={ingredient.amount}
+                  onChange={(e) => {
+                    const newIngredients = [...ingredients];
+                    newIngredients[index].amount = e.target.value;
+                    setIngredients(newIngredients);
+                  }}
+                />
+                <Input 
+                  placeholder="Unit" 
+                  className="w-24"
+                  value={ingredient.unit}
+                  onChange={(e) => {
+                    const newIngredients = [...ingredients];
+                    newIngredients[index].unit = e.target.value;
+                    setIngredients(newIngredients);
+                  }}
+                />
                 <Button
                   variant="outline"
                   size="icon"
@@ -101,6 +181,8 @@ export const RecipeForm = () => {
           <Label htmlFor="instructions">Instructions</Label>
           <Textarea
             id="instructions"
+            value={instructions}
+            onChange={(e) => setInstructions(e.target.value)}
             placeholder="Enter cooking instructions"
             className="mt-1"
             rows={6}
@@ -109,7 +191,7 @@ export const RecipeForm = () => {
       </div>
 
       <div className="flex justify-end">
-        <Button>Save Recipe</Button>
+        <Button onClick={handleSubmit}>Save Recipe</Button>
       </div>
     </Card>
   );

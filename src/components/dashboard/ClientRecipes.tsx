@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface ClientRecipesProps {
   client: {
@@ -13,6 +14,8 @@ interface ClientRecipesProps {
 }
 
 export const ClientRecipes = ({ client, onBack }: ClientRecipesProps) => {
+  const navigate = useNavigate();
+  
   const { data: recipes = [] } = useQuery({
     queryKey: ["recipes", client.id],
     queryFn: async () => {
@@ -38,7 +41,11 @@ export const ClientRecipes = ({ client, onBack }: ClientRecipesProps) => {
 
       <div className="grid gap-4 md:grid-cols-2">
         {recipes.map((recipe) => (
-          <Card key={recipe.id} className="p-6">
+          <Card 
+            key={recipe.id} 
+            className="p-6 hover:bg-accent cursor-pointer transition-colors"
+            onClick={() => navigate(`/recipes/${recipe.id}/edit`)}
+          >
             <h3 className="text-lg font-semibold">{recipe.name}</h3>
             <p className="text-sm text-muted-foreground mt-1">{recipe.description}</p>
             <p className="text-xs text-muted-foreground mt-2">
