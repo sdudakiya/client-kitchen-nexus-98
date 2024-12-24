@@ -6,16 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus, Minus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const RecipeForm = () => {
   const [ingredients, setIngredients] = useState([{ name: "", amount: "", unit: "" }]);
   const [selectedClient, setSelectedClient] = useState<string>("");
 
-  const clients = [
-    { id: "1", name: "Sarah Johnson" },
-    { id: "2", name: "Michael Chen" },
-    { id: "3", name: "Emma Davis" },
-  ];
+  const { data: clients = [] } = useQuery({
+    queryKey: ["clients"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("clients")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const addIngredient = () => {
     setIngredients([...ingredients, { name: "", amount: "", unit: "" }]);
