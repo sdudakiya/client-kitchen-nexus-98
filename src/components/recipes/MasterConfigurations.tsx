@@ -117,7 +117,7 @@ export const MasterConfigurations = ({
           <div className="flex items-center gap-2">
             <Columns className="h-4 w-4" />
             <div className="flex-1">
-              <Label>Production Quantity</Label>
+              <Label>Production Quantity (Kg)</Label>
               <Input
                 type="number"
                 value={productionQuantity.toFixed(0)}
