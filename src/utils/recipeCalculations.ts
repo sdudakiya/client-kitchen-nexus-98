@@ -9,7 +9,7 @@ export const calculateMasterConfigurations = (
   const totalWaterInKg = ingredients.reduce((sum, ing) => sum + ing.waterInKg, 0);
   
   const finalDryWt = totalWeight - totalWaterInKg;
-  const moisture =  (Math.round(((moistureInProduct /100) * finalDryWt) * 100) / 100).toFixed(2);
+  const moisture =  (Math.round(((moistureInProduct /100) * finalDryWt) * 100) / 100);
   const finalOutput = finalDryWt + moisture;
   const finalQuantity = finalOutput - (finalOutput * (allowancePercentage / 100));
 
