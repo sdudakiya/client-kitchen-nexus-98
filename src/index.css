@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: 240 10% 14%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 16%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 16%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 142 72% 42%;
+    --background: 230 50% 98%;    /* Lighter background */
+    --foreground: 240 10% 14%;    /* Dark text for contrast */
+    --card: 230 50% 96%;          /* Slightly darker than background */
+    --card-foreground: 240 10% 14%;
+    --popover: 230 50% 96%;
+    --popover-foreground: 240 10% 14%;
+    --primary: 142 72% 42%;       /* Spotify green */
     --primary-foreground: 0 0% 98%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -32,7 +32,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-spotify-dark text-foreground;
+    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -58,5 +58,5 @@
 }
 
 .glass-card {
-  @apply bg-spotify-dark/40 backdrop-blur-sm border border-white/10;
+  @apply bg-white/40 backdrop-blur-sm border border-white/20 shadow-lg;
 }

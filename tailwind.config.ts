@@ -54,9 +54,9 @@ export default {
 				},
 				spotify: {
 					DEFAULT: '#1DB954',
-					dark: '#221F26',
-					light: '#C8C8C9',
-					text: '#9F9EA1'
+					dark: '#E5DEFF',  // Updated to soft purple
+					light: '#0EA5E9', // Updated to ocean blue
+					text: '#1A1F2C'   // Updated to darker text for contrast
 				}
 			},
 			borderRadius: {
