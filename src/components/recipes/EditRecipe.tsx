@@ -10,6 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { RecipeIngredient } from "@/integrations/supabase/types";
+import { MasterConfigurations } from "./MasterConfigurations";
+import { calculateMasterConfigurations, calculateIngredientTotals } from "@/utils/recipeCalculations";
 
 export const EditRecipe = () => {
   const navigate = useNavigate();
@@ -19,11 +21,7 @@ export const EditRecipe = () => {
   const [instructions, setInstructions] = useState("");
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([]);
   const [moistureInProduct, setMoistureInProduct] = useState(0);
-  const [finalDryWt, setFinalDryWt] = useState(0);
-  const [moisture, setMoisture] = useState(0);
-  const [finalOutput, setFinalOutput] = useState(0);
   const [allowancePercentage, setAllowancePercentage] = useState(0);
-  const [finalQuantity, setFinalQuantity] = useState(0);
   const [productionQuantity, setProductionQuantity] = useState(0);
 
   const { data: recipe } = useQuery({
@@ -47,29 +45,16 @@ export const EditRecipe = () => {
       setInstructions(recipe.instructions || "");
       setIngredients(recipe.ingredients || []);
       setMoistureInProduct(recipe.moistureInProduct || 0);
-      setFinalDryWt(recipe.finalDryWt || 0);
-      setMoisture(recipe.moisture || 0);
-      setFinalOutput(recipe.finalOutput || 0);
       setAllowancePercentage(recipe.allowancePercentage || 0);
-      setFinalQuantity(recipe.finalQuantity || 0);
       setProductionQuantity(recipe.productionQuantity || 0);
     }
   }, [recipe]);
 
-  const calculateIngredientTotals = (ingredients: RecipeIngredient[]) => {
-    const totalWeight = ingredients.reduce((sum, ing) => sum + (Number(ing.weight) || 0), 0);
-    
-    return ingredients.map(ing => ({
-      ...ing,
-      ingredientPercentage: totalWeight ? (Number(ing.weight) / totalWeight) * 100 : 0,
-      bomPercentage: finalOutput ? (Number(ing.weight) / finalOutput) * 100 : 0,
-      waterInKg: (Number(ing.weight) * (Number(ing.moisturePercentage) / 100)) || 0,
-      bomWithAllowance: finalQuantity ? Number(ing.weight) / finalQuantity : 0,
-      bomQtyTheoretical: (Number(ing.weight) / finalOutput) * productionQuantity,
-      bomQtyWithAllowance: ((Number(ing.weight) / finalOutput) * productionQuantity) * (allowancePercentage / 100),
-      totalCost: Number(ing.rate) * (((Number(ing.weight) / finalOutput) * productionQuantity) * (allowancePercentage / 100))
-    }));
-  };
+  const masterConfig = calculateMasterConfigurations(
+    ingredients,
+    moistureInProduct,
+    allowancePercentage
+  );
 
   const addIngredient = () => {
     const newIngredient: RecipeIngredient = {
@@ -87,11 +72,23 @@ export const EditRecipe = () => {
       bomQtyWithAllowance: 0,
       totalCost: 0
     };
-    setIngredients(prev => calculateIngredientTotals([...prev, newIngredient]));
+    setIngredients(prev => calculateIngredientTotals(
+      [...prev, newIngredient],
+      masterConfig.finalOutput,
+      masterConfig.finalQuantity,
+      productionQuantity,
+      allowancePercentage
+    ));
   };
 
   const removeIngredient = (index: number) => {
-    setIngredients(prev => calculateIngredientTotals(prev.filter((_, i) => i !== index)));
+    setIngredients(prev => calculateIngredientTotals(
+      prev.filter((_, i) => i !== index),
+      masterConfig.finalOutput,
+      masterConfig.finalQuantity,
+      productionQuantity,
+      allowancePercentage
+    ));
   };
 
   const updateIngredient = (index: number, field: keyof RecipeIngredient, value: string | number) => {
@@ -100,7 +97,22 @@ export const EditRecipe = () => {
       ...newIngredients[index],
       [field]: value
     };
-    setIngredients(calculateIngredientTotals(newIngredients));
+    setIngredients(calculateIngredientTotals(
+      newIngredients,
+      masterConfig.finalOutput,
+      masterConfig.finalQuantity,
+      productionQuantity,
+      allowancePercentage
+    ));
+  };
+
+  const calculateTotals = () => {
+    return {
+      weight: ingredients.reduce((sum, ing) => sum + Number(ing.weight), 0),
+      ingredientPercentage: 100,
+      waterInKg: ingredients.reduce((sum, ing) => sum + ing.waterInKg, 0),
+      totalCost: ingredients.reduce((sum, ing) => sum + ing.totalCost, 0)
+    };
   };
 
   const handleSubmit = async () => {
@@ -113,11 +125,11 @@ export const EditRecipe = () => {
           instructions,
           ingredients,
           moistureInProduct,
-          finalDryWt,
-          moisture,
-          finalOutput,
+          finalDryWt: masterConfig.finalDryWt,
+          moisture: masterConfig.moisture,
+          finalOutput: masterConfig.finalOutput,
           allowancePercentage,
-          finalQuantity,
+          finalQuantity: masterConfig.finalQuantity,
           productionQuantity
         })
         .eq("id", id);
@@ -130,15 +142,6 @@ export const EditRecipe = () => {
       console.error('Error updating recipe:', error);
       toast.error("Error updating recipe");
     }
-  };
-
-  const calculateTotals = () => {
-    return {
-      weight: ingredients.reduce((sum, ing) => sum + Number(ing.weight), 0),
-      ingredientPercentage: 100,
-      waterInKg: ingredients.reduce((sum, ing) => sum + ing.waterInKg, 0),
-      totalCost: ingredients.reduce((sum, ing) => sum + ing.totalCost, 0)
-    };
   };
 
   const totals = calculateTotals();
@@ -176,71 +179,20 @@ export const EditRecipe = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Moisture in Product (%)</Label>
-              <Input
-                type="number"
-                value={moistureInProduct}
-                onChange={(e) => setMoistureInProduct(Number(e.target.value))}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Final Dry Weight</Label>
-              <Input
-                type="number"
-                value={finalDryWt}
-                onChange={(e) => setFinalDryWt(Number(e.target.value))}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Moisture (%)</Label>
-              <Input
-                type="number"
-                value={moisture}
-                onChange={(e) => setMoisture(Number(e.target.value))}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Final Output</Label>
-              <Input
-                type="number"
-                value={finalOutput}
-                onChange={(e) => setFinalOutput(Number(e.target.value))}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Allowance (%)</Label>
-              <Input
-                type="number"
-                value={allowancePercentage}
-                onChange={(e) => setAllowancePercentage(Number(e.target.value))}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Final Quantity</Label>
-              <Input
-                type="number"
-                value={finalQuantity}
-                onChange={(e) => setFinalQuantity(Number(e.target.value))}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label>Production Quantity</Label>
-              <Input
-                type="number"
-                value={productionQuantity}
-                onChange={(e) => setProductionQuantity(Number(e.target.value))}
-                className="mt-1"
-              />
-            </div>
-          </div>
+          <MasterConfigurations
+            moistureInProduct={moistureInProduct}
+            setMoistureInProduct={setMoistureInProduct}
+            finalDryWt={masterConfig.finalDryWt}
+            moisture={masterConfig.moisture}
+            finalOutput={masterConfig.finalOutput}
+            allowancePercentage={allowancePercentage}
+            setAllowancePercentage={setAllowancePercentage}
+            finalQuantity={masterConfig.finalQuantity}
+            productionQuantity={productionQuantity}
+            setProductionQuantity={setProductionQuantity}
+            totalWeight={totals.weight}
+            totalWaterInKg={totals.waterInKg}
+          />
 
           <div>
             <Label>Ingredients</Label>
@@ -286,6 +238,7 @@ export const EditRecipe = () => {
                           readOnly
                           className="w-20 bg-gray-50"
                         />
+                
                       </td>
                       <td className="p-1">
                         <Input

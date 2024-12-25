@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { RecipeIngredient } from "@/integrations/supabase/types";
+import { MasterConfigurations } from "./MasterConfigurations";
+import { calculateMasterConfigurations, calculateIngredientTotals } from "@/utils/recipeCalculations";
 
 export const RecipeForm = () => {
   const navigate = useNavigate();
@@ -19,11 +21,7 @@ export const RecipeForm = () => {
   const [instructions, setInstructions] = useState("");
   const [selectedClient, setSelectedClient] = useState<string>("");
   const [moistureInProduct, setMoistureInProduct] = useState(0);
-  const [finalDryWt, setFinalDryWt] = useState(0);
-  const [moisture, setMoisture] = useState(0);
-  const [finalOutput, setFinalOutput] = useState(0);
   const [allowancePercentage, setAllowancePercentage] = useState(0);
-  const [finalQuantity, setFinalQuantity] = useState(0);
   const [productionQuantity, setProductionQuantity] = useState(0);
   const [ingredients, setIngredients] = useState<RecipeIngredient[]>([{
     name: "",
@@ -54,20 +52,11 @@ export const RecipeForm = () => {
     },
   });
 
-  const calculateIngredientTotals = (ingredients: RecipeIngredient[]) => {
-    const totalWeight = ingredients.reduce((sum, ing) => sum + (Number(ing.weight) || 0), 0);
-    
-    return ingredients.map(ing => ({
-      ...ing,
-      ingredientPercentage: totalWeight ? (Number(ing.weight) / totalWeight) * 100 : 0,
-      bomPercentage: finalOutput ? (Number(ing.weight) / finalOutput) * 100 : 0,
-      waterInKg: (Number(ing.weight) * (Number(ing.moisturePercentage) / 100)) || 0,
-      bomWithAllowance: finalQuantity ? Number(ing.weight) / finalQuantity : 0,
-      bomQtyTheoretical: (Number(ing.weight) / finalOutput) * productionQuantity,
-      bomQtyWithAllowance: ((Number(ing.weight) / finalOutput) * productionQuantity) * (allowancePercentage / 100),
-      totalCost: Number(ing.rate) * (((Number(ing.weight) / finalOutput) * productionQuantity) * (allowancePercentage / 100))
-    }));
-  };
+  const masterConfig = calculateMasterConfigurations(
+    ingredients,
+    moistureInProduct,
+    allowancePercentage
+  );
 
   const addIngredient = () => {
     const newIngredient: RecipeIngredient = {
@@ -85,11 +74,23 @@ export const RecipeForm = () => {
       bomQtyWithAllowance: 0,
       totalCost: 0
     };
-    setIngredients(prev => calculateIngredientTotals([...prev, newIngredient]));
+    setIngredients(prev => calculateIngredientTotals(
+      [...prev, newIngredient],
+      masterConfig.finalOutput,
+      masterConfig.finalQuantity,
+      productionQuantity,
+      allowancePercentage
+    ));
   };
 
   const removeIngredient = (index: number) => {
-    setIngredients(prev => calculateIngredientTotals(prev.filter((_, i) => i !== index)));
+    setIngredients(prev => calculateIngredientTotals(
+      prev.filter((_, i) => i !== index),
+      masterConfig.finalOutput,
+      masterConfig.finalQuantity,
+      productionQuantity,
+      allowancePercentage
+    ));
   };
 
   const updateIngredient = (index: number, field: keyof RecipeIngredient, value: string | number) => {
@@ -98,7 +99,13 @@ export const RecipeForm = () => {
       ...newIngredients[index],
       [field]: value
     };
-    setIngredients(calculateIngredientTotals(newIngredients));
+    setIngredients(calculateIngredientTotals(
+      newIngredients,
+      masterConfig.finalOutput,
+      masterConfig.finalQuantity,
+      productionQuantity,
+      allowancePercentage
+    ));
   };
 
   const calculateTotals = () => {
@@ -139,11 +146,11 @@ export const RecipeForm = () => {
           client_id: selectedClient,
           created_by: user.id,
           moistureInProduct,
-          finalDryWt,
-          moisture,
-          finalOutput,
+          finalDryWt: masterConfig.finalDryWt,
+          moisture: masterConfig.moisture,
+          finalOutput: masterConfig.finalOutput,
           allowancePercentage,
-          finalQuantity,
+          finalQuantity: masterConfig.finalQuantity,
           productionQuantity
         }]);
 
@@ -200,71 +207,20 @@ export const RecipeForm = () => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Moisture in Product (%)</Label>
-            <Input
-              type="number"
-              value={moistureInProduct}
-              onChange={(e) => setMoistureInProduct(Number(e.target.value))}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label>Final Dry Weight</Label>
-            <Input
-              type="number"
-              value={finalDryWt}
-              onChange={(e) => setFinalDryWt(Number(e.target.value))}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label>Moisture (%)</Label>
-            <Input
-              type="number"
-              value={moisture}
-              onChange={(e) => setMoisture(Number(e.target.value))}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label>Final Output</Label>
-            <Input
-              type="number"
-              value={finalOutput}
-              onChange={(e) => setFinalOutput(Number(e.target.value))}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label>Allowance (%)</Label>
-            <Input
-              type="number"
-              value={allowancePercentage}
-              onChange={(e) => setAllowancePercentage(Number(e.target.value))}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label>Final Quantity</Label>
-            <Input
-              type="number"
-              value={finalQuantity}
-              onChange={(e) => setFinalQuantity(Number(e.target.value))}
-              className="mt-1"
-            />
-          </div>
-          <div>
-            <Label>Production Quantity</Label>
-            <Input
-              type="number"
-              value={productionQuantity}
-              onChange={(e) => setProductionQuantity(Number(e.target.value))}
-              className="mt-1"
-            />
-          </div>
-        </div>
+        <MasterConfigurations
+          moistureInProduct={moistureInProduct}
+          setMoistureInProduct={setMoistureInProduct}
+          finalDryWt={masterConfig.finalDryWt}
+          moisture={masterConfig.moisture}
+          finalOutput={masterConfig.finalOutput}
+          allowancePercentage={allowancePercentage}
+          setAllowancePercentage={setAllowancePercentage}
+          finalQuantity={masterConfig.finalQuantity}
+          productionQuantity={productionQuantity}
+          setProductionQuantity={setProductionQuantity}
+          totalWeight={totals.weight}
+          totalWaterInKg={totals.waterInKg}
+        />
 
         <div>
           <Label>Ingredients</Label>
@@ -336,7 +292,6 @@ export const RecipeForm = () => {
                     <td className="p-1">
                       <Input
                         type="number"
-                
                         value={ingredient.rate}
                         onChange={(e) => updateIngredient(index, 'rate', Number(e.target.value))}
                         className="w-24"
