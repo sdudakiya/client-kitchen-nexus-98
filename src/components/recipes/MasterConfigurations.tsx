@@ -71,7 +71,7 @@ export const MasterConfigurations = ({
               <Label>Moisture</Label>
               <Input
                 type="number"
-                value={(Math.round(moisture * 100) / 100).toFixed(2)}
+                value={moisture}
                 readOnly
                 className="mt-1 bg-gray-50"
               />
