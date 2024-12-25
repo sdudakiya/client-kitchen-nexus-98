@@ -37,7 +37,7 @@ export const calculateIngredientTotals = (
     ingredientPercentage: totalWeight ? (Number(ing.weight) / totalWeight) * 100 : 0,
     bomPercentage: finalOutput ? (Number(ing.weight) / finalOutput) * 100 : 0,
     waterInKg: (Number(ing.weight) * (Number(ing.moisturePercentage) / 100)) || 0,
-    bomWithAllowance: finalQuantity ? Number(ing.weight) / finalQuantity : 0,
+    bomWithAllowance: finalQuantity ? (Number(ing.weight) / finalQuantity) * 100 : 0,
     bomQtyTheoretical: (Number(ing.weight) / finalOutput) * productionQuantity,
     bomQtyWithAllowance: ((Number(ing.weight) / finalOutput) * productionQuantity) * (1 + (allowancePercentage / 100)),
     totalCost: Number(ing.rate) * (((Number(ing.weight) / finalOutput) * productionQuantity) * (1 + (allowancePercentage / 100)))
