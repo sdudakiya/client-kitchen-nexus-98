@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Calculator, Database, Settings, Columns } from "lucide-react";
+import React from 'react';
 
 interface MasterConfigurationsProps {
   moistureInProduct: number;
@@ -70,7 +71,7 @@ export const MasterConfigurations = ({
               <Label>Moisture</Label>
               <Input
                 type="number"
-                value={moisture.toFixed(2)}
+                value={Math.round(moisture).toFixed(2)}
                 readOnly
                 className="mt-1 bg-gray-50"
               />
