@@ -227,14 +227,14 @@ export const EditRecipe = () => {
                       <td className="p-1">
                         <Input
                           type="number"
-                          value={ingredient.weight}
+                          value={ingredient.weight.toFixed(3)}
                           onChange={(e) => updateIngredient(index, 'weight', Number(e.target.value))}
                           className="w-24"
                         />
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.ingredientPercentage.toFixed(3)}
+                          value={ingredient.ingredientPercentage.toFixed(2)}
                           readOnly
                           className="w-20 bg-gray-50"
                         />
@@ -242,7 +242,7 @@ export const EditRecipe = () => {
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.bomPercentage.toFixed(3)}
+                          value={ingredient.bomPercentage.toFixed(2)}
                           readOnly
                           className="w-20 bg-gray-50"
                         />
@@ -250,7 +250,7 @@ export const EditRecipe = () => {
                       <td className="p-1">
                         <Input
                           type="number"
-                          value={ingredient.moisturePercentage}
+                          value={ingredient.moisturePercentage.toFixed(2)}
                           onChange={(e) => updateIngredient(index, 'moisturePercentage', Number(e.target.value))}
                           className="w-24"
                         />
@@ -265,14 +265,14 @@ export const EditRecipe = () => {
                       <td className="p-1">
                         <Input
                           type="number"
-                          value={ingredient.rate}
+                          value={ingredient.rate.toFixed(2)}
                           onChange={(e) => updateIngredient(index, 'rate', Number(e.target.value))}
                           className="w-24"
                         />
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.bomWithAllowance.toFixed(3)}
+                          value={ingredient.bomWithAllowance.toFixed(2)}
                           readOnly
                           className="w-24 bg-gray-50"
                         />
@@ -293,7 +293,7 @@ export const EditRecipe = () => {
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.totalCost.toFixed(3)}
+                          value={ingredient.totalCost.toFixed(2)}
                           readOnly
                           className="w-24 bg-gray-50"
                         />
@@ -312,16 +312,16 @@ export const EditRecipe = () => {
                   ))}
                   <tr className="font-bold text-sm">
                     <td className="p-1">Totals</td>
-                    <td className="p-1">{totals.weight.toFixed(3)}</td>
-                    <td className="p-1">{totals.ingredientPercentage.toFixed(3)}</td>
+                    <td className="p-1">{totals.weight.toFixed(2)}</td>
+                    <td className="p-1">{totals.ingredientPercentage.toFixed(2)}</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
-                    <td className="p-1">{totals.waterInKg.toFixed(3)}</td>
+                    <td className="p-1">{totals.waterInKg.toFixed(2)}</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
-                    <td className="p-1">{totals.totalCost.toFixed(3)}</td>
+                    <td className="p-1">{totals.totalCost.toFixed(2)}</td>
                     <td className="p-1"></td>
                   </tr>
                 </tbody>
