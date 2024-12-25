@@ -312,16 +312,16 @@ export const EditRecipe = () => {
                   ))}
                   <tr className="font-bold text-sm">
                     <td className="p-1">Totals</td>
-                    <td className="p-1">{totals.weight.toFixed(2)}</td>
+                    <td className="p-1">{totals.weight.toFixed(3)}</td>
                     <td className="p-1">{totals.ingredientPercentage.toFixed(2)}</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
-                    <td className="p-1">{totals.waterInKg.toFixed(2)}</td>
+                    <td className="p-1">{totals.waterInKg.toFixed(3)}</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
-                    <td className="p-1">{totals.totalCost.toFixed(2)}</td>
+                    <td className="p-1">{totals.totalCost.toFixed(3)}</td>
                     <td className="p-1"></td>
                   </tr>
                 </tbody>
