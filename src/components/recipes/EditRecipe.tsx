@@ -56,6 +56,16 @@ export const EditRecipe = () => {
     allowancePercentage
   );
 
+  const handleConfigChange = () => {
+    setIngredients(prev => calculateIngredientTotals(
+      prev,
+      masterConfig.finalOutput,
+      masterConfig.finalQuantity,
+      productionQuantity,
+      allowancePercentage
+    ));
+  };
+
   const addIngredient = () => {
     const newIngredient: RecipeIngredient = {
       name: "",
@@ -192,6 +202,7 @@ export const EditRecipe = () => {
             setProductionQuantity={setProductionQuantity}
             totalWeight={totals.weight}
             totalWaterInKg={totals.waterInKg}
+            onConfigChange={handleConfigChange}
           />
 
           <div>
@@ -238,7 +249,6 @@ export const EditRecipe = () => {
                           readOnly
                           className="w-20 bg-gray-50"
                         />
-                
                       </td>
                       <td className="p-1">
                         <Input

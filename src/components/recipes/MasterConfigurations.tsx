@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Calculator, Database, Settings, Columns } from "lucide-react";
+import { useEffect } from "react";
 
 interface MasterConfigurationsProps {
   moistureInProduct: number;
@@ -16,6 +17,7 @@ interface MasterConfigurationsProps {
   setProductionQuantity: (value: number) => void;
   totalWeight: number;
   totalWaterInKg: number;
+  onConfigChange?: () => void;
 }
 
 export const MasterConfigurations = ({
@@ -31,7 +33,15 @@ export const MasterConfigurations = ({
   setProductionQuantity,
   totalWeight,
   totalWaterInKg,
+  onConfigChange
 }: MasterConfigurationsProps) => {
+  // Trigger recalculation when any of these values change
+  useEffect(() => {
+    if (onConfigChange) {
+      onConfigChange();
+    }
+  }, [moistureInProduct, allowancePercentage, productionQuantity, onConfigChange]);
+
   return (
     <Card className="p-4">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">

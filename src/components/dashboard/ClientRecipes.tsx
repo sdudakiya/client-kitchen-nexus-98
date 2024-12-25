@@ -44,7 +44,7 @@ export const ClientRecipes = ({ client, onBack }: ClientRecipesProps) => {
           <Card 
             key={recipe.id} 
             className="p-6 hover:bg-accent cursor-pointer transition-colors"
-            onClick={() => navigate(`/recipes/${recipe.id}/edit`)}
+            onClick={() => navigate(`/recipes/${recipe.id}`)}
           >
             <h3 className="text-lg font-semibold">{recipe.name}</h3>
             <p className="text-sm text-muted-foreground mt-1">{recipe.description}</p>
