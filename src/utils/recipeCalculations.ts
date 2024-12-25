@@ -1,4 +1,4 @@
-import { RecipeIngredient } from "@/integrations/supabase/types";
+import { RecipeIngredient } from "@/types/recipe";
 
 export const calculateMasterConfigurations = (
   ingredients: RecipeIngredient[],

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft, Edit } from "lucide-react";
-import { RecipeIngredient } from "@/integrations/supabase/types";
+import { Recipe, RecipeIngredient, isRecipeIngredientArray } from "@/types/recipe";
 
 export const ViewRecipe = () => {
   const navigate = useNavigate();
@@ -20,17 +20,19 @@ export const ViewRecipe = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Recipe;
     },
   });
 
   if (!recipe) return null;
 
+  const ingredients = isRecipeIngredientArray(recipe.ingredients) ? recipe.ingredients : [];
+
   const totals = {
-    weight: recipe.ingredients?.reduce((sum: number, ing: RecipeIngredient) => sum + Number(ing.weight), 0) || 0,
+    weight: ingredients.reduce((sum, ing) => sum + Number(ing.weight), 0),
     ingredientPercentage: 100,
-    waterInKg: recipe.ingredients?.reduce((sum: number, ing: RecipeIngredient) => sum + ing.waterInKg, 0) || 0,
-    totalCost: recipe.ingredients?.reduce((sum: number, ing: RecipeIngredient) => sum + ing.totalCost, 0) || 0
+    waterInKg: ingredients.reduce((sum, ing) => sum + ing.waterInKg, 0),
+    totalCost: ingredients.reduce((sum, ing) => sum + ing.totalCost, 0)
   };
 
   return (
@@ -93,7 +95,7 @@ export const ViewRecipe = () => {
                 </tr>
               </thead>
               <tbody>
-                {recipe.ingredients?.map((ingredient: RecipeIngredient, index: number) => (
+                {ingredients.map((ingredient: RecipeIngredient, index: number) => (
                   <tr key={index} className="text-sm">
                     <td className="p-1">{ingredient.name}</td>
                     <td className="p-1">{ingredient.weight.toFixed(3)}</td>
