@@ -1,6 +1,7 @@
 import { Json } from "@/integrations/supabase/types";
 
 export interface RecipeIngredient {
+  [key: string]: string | number; // Add index signature to make it compatible with Json type
   name: string;
   amount: string;
   unit: string;
@@ -41,6 +42,13 @@ export function isRecipeIngredientArray(json: Json | null): json is RecipeIngred
     typeof item === 'object' && 
     item !== null && 
     'name' in item &&
-    'weight' in item
+    'weight' in item &&
+    typeof item.name === 'string' &&
+    typeof item.weight === 'number'
   );
+}
+
+// Helper function to convert RecipeIngredient array to Json
+export function ingredientsToJson(ingredients: RecipeIngredient[]): Json {
+  return ingredients as unknown as Json;
 }

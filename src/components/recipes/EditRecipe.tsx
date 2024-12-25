@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Recipe, RecipeIngredient, isRecipeIngredientArray } from "@/types/recipe";
+import { Recipe, RecipeIngredient, isRecipeIngredientArray, ingredientsToJson } from "@/types/recipe";
 import { MasterConfigurations } from "./MasterConfigurations";
 import { calculateMasterConfigurations, calculateIngredientTotals } from "@/utils/recipeCalculations";
 
@@ -34,7 +34,7 @@ export const EditRecipe = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Recipe;
     },
   });
 
@@ -123,7 +123,7 @@ export const EditRecipe = () => {
           name,
           description,
           instructions,
-          ingredients,
+          ingredients: ingredientsToJson(ingredients),
           moistureInProduct,
           finalDryWt: masterConfig.finalDryWt,
           moisture: masterConfig.moisture,

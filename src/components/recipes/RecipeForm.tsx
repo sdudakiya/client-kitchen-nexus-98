@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { RecipeIngredient } from "@/types/recipe";
 import { MasterConfigurations } from "./MasterConfigurations";
 import { calculateMasterConfigurations, calculateIngredientTotals } from "@/utils/recipeCalculations";
+import { ingredientsToJson } from "@/types/recipe";
 
 export const RecipeForm = () => {
   const navigate = useNavigate();
@@ -142,7 +143,7 @@ export const RecipeForm = () => {
           name,
           description,
           instructions,
-          ingredients,
+          ingredients: ingredientsToJson(ingredients),
           client_id: selectedClient,
           created_by: user.id,
           moistureInProduct,
