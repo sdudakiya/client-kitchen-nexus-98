@@ -46,7 +46,7 @@ export const MasterConfigurations = ({
               <Label>Moisture in Product (%)</Label>
               <Input
                 type="number"
-                value={moistureInProduct.toFixed(3)}
+                value={moistureInProduct.toFixed(2)}
                 onChange={(e) => setMoistureInProduct(Number(e.target.value))}
                 className="mt-1"
               />
@@ -58,7 +58,7 @@ export const MasterConfigurations = ({
               <Label>Final Dry Weight</Label>
               <Input
                 type="number"
-                value={finalDryWt.toFixed(3)}
+                value={finalDryWt.toFixed(2)}
                 readOnly
                 className="mt-1 bg-gray-50"
               />
@@ -70,7 +70,7 @@ export const MasterConfigurations = ({
               <Label>Moisture</Label>
               <Input
                 type="number"
-                value={moisture.toFixed(3)}
+                value={moisture.toFixed(2)}
                 readOnly
                 className="mt-1 bg-gray-50"
               />
@@ -82,7 +82,7 @@ export const MasterConfigurations = ({
               <Label>Final Output</Label>
               <Input
                 type="number"
-                value={finalOutput.toFixed(3)}
+                value={finalOutput.toFixed(2)}
                 readOnly
                 className="mt-1 bg-gray-50"
               />
@@ -96,7 +96,7 @@ export const MasterConfigurations = ({
               <Label>Allowance (%)</Label>
               <Input
                 type="number"
-                value={allowancePercentage.toFixed(3)}
+                value={allowancePercentage.toFixed(0)}
                 onChange={(e) => setAllowancePercentage(Number(e.target.value))}
                 className="mt-1"
               />
@@ -108,7 +108,7 @@ export const MasterConfigurations = ({
               <Label>Final Quantity</Label>
               <Input
                 type="number"
-                value={finalQuantity.toFixed(3)}
+                value={finalQuantity.toFixed(2)}
                 readOnly
                 className="mt-1 bg-gray-50"
               />
@@ -120,7 +120,7 @@ export const MasterConfigurations = ({
               <Label>Production Quantity</Label>
               <Input
                 type="number"
-                value={productionQuantity.toFixed(3)}
+                value={productionQuantity.toFixed(0)}
                 onChange={(e) => setProductionQuantity(Number(e.target.value))}
                 className="mt-1"
               />
