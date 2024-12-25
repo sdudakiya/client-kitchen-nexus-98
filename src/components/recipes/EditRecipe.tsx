@@ -234,7 +234,7 @@ export const EditRecipe = () => {
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.ingredientPercentage.toFixed(2)}
+                          value={ingredient.ingredientPercentage.toFixed(3)}
                           readOnly
                           className="w-20 bg-gray-50"
                         />
@@ -242,7 +242,7 @@ export const EditRecipe = () => {
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.bomPercentage.toFixed(2)}
+                          value={ingredient.bomPercentage.toFixed(3)}
                           readOnly
                           className="w-20 bg-gray-50"
                         />
@@ -257,7 +257,7 @@ export const EditRecipe = () => {
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.waterInKg.toFixed(2)}
+                          value={ingredient.waterInKg.toFixed(3)}
                           readOnly
                           className="w-24 bg-gray-50"
                         />
@@ -272,28 +272,28 @@ export const EditRecipe = () => {
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.bomWithAllowance.toFixed(2)}
+                          value={ingredient.bomWithAllowance.toFixed(3)}
                           readOnly
                           className="w-24 bg-gray-50"
                         />
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.bomQtyTheoretical.toFixed(2)}
+                          value={ingredient.bomQtyTheoretical.toFixed(3)}
                           readOnly
                           className="w-24 bg-gray-50"
                         />
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.bomQtyWithAllowance.toFixed(2)}
+                          value={ingredient.bomQtyWithAllowance.toFixed(3)}
                           readOnly
                           className="w-24 bg-gray-50"
                         />
                       </td>
                       <td className="p-1">
                         <Input
-                          value={ingredient.totalCost.toFixed(2)}
+                          value={ingredient.totalCost.toFixed(3)}
                           readOnly
                           className="w-24 bg-gray-50"
                         />
@@ -313,7 +313,7 @@ export const EditRecipe = () => {
                   <tr className="font-bold text-sm">
                     <td className="p-1">Totals</td>
                     <td className="p-1">{totals.weight.toFixed(3)}</td>
-                    <td className="p-1">{totals.ingredientPercentage.toFixed(2)}</td>
+                    <td className="p-1">{totals.ingredientPercentage.toFixed(3)}</td>
                     <td className="p-1">-</td>
                     <td className="p-1">-</td>
                     <td className="p-1">{totals.waterInKg.toFixed(3)}</td>
