@@ -50,55 +50,55 @@ export type Database = {
       }
       recipes: {
         Row: {
+          allowancePercentage: number | null
           client_id: string
           created_at: string
           created_by: string
           description: string | null
+          finalDryWt: number | null
+          finalOutput: number | null
+          finalQuantity: number | null
           id: string
           ingredients: Json | null
           instructions: string | null
+          moisture: number | null
+          moistureInProduct: number | null
           name: string
-          moistureInProduct: number
-          finalDryWt: number
-          moisture: number
-          finalOutput: number
-          allowancePercentage: number
-          finalQuantity: number
-          productionQuantity: number
+          productionQuantity: number | null
         }
         Insert: {
+          allowancePercentage?: number | null
           client_id: string
           created_at?: string
           created_by: string
           description?: string | null
+          finalDryWt?: number | null
+          finalOutput?: number | null
+          finalQuantity?: number | null
           id?: string
           ingredients?: Json | null
           instructions?: string | null
+          moisture?: number | null
+          moistureInProduct?: number | null
           name: string
-          moistureInProduct: number
-          finalDryWt: number
-          moisture: number
-          finalOutput: number
-          allowancePercentage: number
-          finalQuantity: number
-          productionQuantity: number
+          productionQuantity?: number | null
         }
         Update: {
+          allowancePercentage?: number | null
           client_id?: string
           created_at?: string
           created_by?: string
           description?: string | null
+          finalDryWt?: number | null
+          finalOutput?: number | null
+          finalQuantity?: number | null
           id?: string
           ingredients?: Json | null
           instructions?: string | null
+          moisture?: number | null
+          moistureInProduct?: number | null
           name?: string
-          moistureInProduct?: number
-          finalDryWt?: number
-          moisture?: number
-          finalOutput?: number
-          allowancePercentage?: number
-          finalQuantity?: number
-          productionQuantity?: number
+          productionQuantity?: number | null
         }
         Relationships: [
           {
@@ -135,7 +135,7 @@ export type Tables<
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
     ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
         Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never,
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
   ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
       Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
@@ -147,10 +147,10 @@ export type Tables<
         PublicSchema["Views"])
     ? (PublicSchema["Tables"] &
         PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
-    : never
+        Row: infer R
+      }
+      ? R
+      : never
     : never
 
 export type TablesInsert<
@@ -168,10 +168,10 @@ export type TablesInsert<
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
 
 export type TablesUpdate<
@@ -189,10 +189,10 @@ export type TablesUpdate<
     : never
   : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
     ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
-    : never
+        Update: infer U
+      }
+      ? U
+      : never
     : never
 
 export type Enums<
@@ -222,19 +222,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
-export interface RecipeIngredient {
-  name: string;
-  amount: string;
-  unit: string;
-  weight: number;
-  ingredientPercentage: number;
-  bomPercentage: number;
-  moisturePercentage: number;
-  waterInKg: number;
-  rate: number;
-  bomWithAllowance: number;
-  bomQtyTheoretical: number;
-  bomQtyWithAllowance: number;
-  totalCost: number;
-}

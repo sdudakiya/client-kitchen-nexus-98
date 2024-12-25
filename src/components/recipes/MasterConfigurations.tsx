@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Calculator, Database, Settings, Columns } from "lucide-react";
-import React from 'react';
 
 interface MasterConfigurationsProps {
   moistureInProduct: number;
